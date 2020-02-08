@@ -72,6 +72,16 @@
        src: /usr/lib/syslinux/modules/bios/vesamenu.c32
        dest: /netboot/tftp/
       delegate_to: localhost
+    - name: copy vmlinuz
+      copy:
+       src: /netboot/nfs/ubuntu1804/casper/vmlinuz
+       dest: /netboot/tftp/ubuntu1804/
+      delegate_to: localhost
+    - name: copy initrd
+      copy:
+       src: /netboot/nfs/ubuntu1804/casper/initrd
+       dest: /netboot/tftp/ubuntu1804/
+      delegate_to: localhost
     - name: Create a netboot directory if it does not exist
       file:
         path: /netboot/tftp/pxelinux.cfg
@@ -86,16 +96,16 @@
         #      get_url:
         #        url: http://releases.ubuntu.com/18.04.3/ubuntu-18.04.3-live-server-amd64.iso?_ga=2.148216631.1414345989.1581154436-748320942.1577729773
         #        dest: /tmp/ubuntu.iso
-    - name: Create a netboot directory if it does not exist
-      file:
-        path: /netboot/tftp/ubuntu1804
-        state: directory
-        mode: '0755'
-    - name: Create a netboot directory if it does not exist
-      file:
-        path: /netboot/nfs/ubuntu1804
-        state: directory
-        mode: '0755'
+        #    - name: Create a netboot directory if it does not exist
+        #      file:
+        #        path: /netboot/tftp/ubuntu1804
+        #        state: directory
+        #        mode: '0755'
+        #    - name: Create a netboot directory if it does not exist
+        #      file:
+        #        path: /netboot/nfs/ubuntu1804
+        #        state: directory
+        #        mode: '0755'
         #    - name: Mount Ubuntu iso
         #      mount:
         #        path: /mnt
@@ -106,7 +116,7 @@
         #    - name: copy ubuntu
         #      copy:
         #       src: /mnt/
-        #       dest: /netboot/tftp/ubuntu1804/
+        #       dest: /netboot/nfs/ubuntu1804/
         #      delegate_to: localhost
     - name: Recursively change ownership of a directory
       file:

@@ -5,5 +5,4 @@ label install1
 menu label ^Install Ubuntu 18.04 LTS Desktop
 menu default
 kernel ubuntu1804/vmlinuz
-append initrd=ubuntu1804/initrd boot=casper netboot=nfs nfsroot={{ ansible_default_ipv4.address }}:/
-netboot/nfs/ubuntu1804/ splash toram ---
+append initrd=ubuntu1804/initrd boot=casper netboot=nfs nfsroot={{ ansible_default_ipv4.address }}:/netboot/nfs/ubuntu1804/ splash toram ---
