@@ -1,10 +1,87 @@
 ---
 - name: pxe-ubuntu
-  hosts: all
+  hosts: 127.0.0.1
+  connection: local
   become: yes
   pre_tasks:
-    - name: Install dnsmasq
-      apt:
+          #  - name: Install dnsmasq
+          #    apt:
+          #      name: dnsmasq
+          #      state: present
+          #      update_cache: yes
+    - name: Write DNS mask
+      template:
+        src: dnsmasq.conf.j2
+        dest: /etc/dnsmasq.conf
+        backup: yes
+    - name: Create a tftp directory if it does not exist
+      file:
+        path: /netboot/tftp
+        state: directory
+        mode: '0755'
+    - name: Restart service dnsmasq, in all cases
+      service:
         name: dnsmasq
+        state: restarted
+    - name: Install nfs
+      apt:
+        name: nfs-kernel-server
         state: present
         update_cache: yes
+    - name: Create a netboot directory if it does not exist
+      file:
+        path: /netboot/nfs
+        state: directory
+        mode: '0755'
+    - name: Add a nfs exports config
+      lineinfile:
+        path: /etc/exports
+        line: /netboot/nfs  *(ro,sync,no_wdelay,insecure_locks,no_root_squash,insecure,no_subtree_check)
+        create: yes
+        backup: yes
+    - name: share nfs shares
+      command: "exportfs -a"
+      register: nfsShare
+    - name: Install a list of packages
+      apt:
+        pkg:
+        - syslinux
+        - pxelinux
+    - name: copy pxelinux
+      copy:
+       src: /usr/lib/PXELINUX/pxelinux.0
+       dest: /netboot/tftp/
+      delegate_to: localhost
+    - name: copy pxelinux
+      copy:
+       src: /usr/lib/syslinux/modules/bios/ldlinux.c32
+       dest: /netboot/tftp/
+      delegate_to: localhost
+    - name: copy pxelinux
+      copy:
+       src: /usr/lib/syslinux/modules/bios/libcom32.c32
+       dest: /netboot/tftp/
+      delegate_to: localhost
+    - name: copy pxelinux
+      copy:
+       src: /usr/lib/syslinux/modules/bios/libutil.c32
+       dest: /netboot/tftp/
+      delegate_to: localhost
+    - name: copy pxelinux
+      copy:
+       src: /usr/lib/syslinux/modules/bios/vesamenu.c32
+       dest: /netboot/tftp/
+      delegate_to: localhost
+    - name: Create a netboot directory if it does not exist
+      file:
+        path: /netboot/tftp/pxelinux.cfg
+        state: directory
+        mode: '0755'
+    - name: Create pxe config
+      file:
+        path: /netboot/tftp/pxelinux.cfg/default
+        state: touch
+        #    - name: Download ubuntu
+        #      get_url:
+        #        url: http://releases.ubuntu.com/18.04.3/ubuntu-18.04.3-live-server-amd64.iso?_ga=2.148216631.1414345989.1581154436-748320942.1577729773
+        #        dest: /tmp/ubuntu.iso

@@ -1,0 +1,14 @@
+interface={{ ansible_default_ipv4.interface }}
+bind-interfaces
+#domain=linuxhint.local
+ 
+dhcp-range={{ ansible_default_ipv4.interface }},{{ ansible_default_ipv4.address.split(".")[0] }}.{{ ansible_default_ipv4.address.split(".")[1] }}.{{ ansible_default_ipv4.address.split(".")[2] }}.100,{{ ansible_default_ipv4.address.split(".")[0] }}.{{ ansible_default_ipv4.address.split(".")[1] }}.{{ ansible_default_ipv4.address.split(".")[2] }}.240,255.255.255.0,8h
+dhcp-option=option:router,{{ ansible_default_ipv4.address }}
+dhcp-option=option:dns-server,{{ ansible_default_ipv4.address }}
+dhcp-option=option:dns-server,8.8.8.8
+ 
+enable-tftp
+tftp-root=/netboot/tftp
+dhcp-boot=pxelinux.0,{{ansible_hostname}}-s20,{{ ansible_default_ipv4.address }}
+pxe-prompt="Press F8 for PXE Network boot.", 2
+pxe-service=x86PC, "Install OS via PXE",pxelinux
