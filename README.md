@@ -1,2 +1,3 @@
 Build VM with Ubunutu 18.04
-Install Ansible
+apt install -y ansible git openssh-server
+
