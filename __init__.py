@@ -167,7 +167,7 @@ class device:
 
     def encrypt(self, payload):
         encryptor = self.aes.encryptor()
-        return encryptor.update((bytes(payload)) + encryptor.finalize()
+        return encryptor.update(bytes(payload)) + encryptor.finalize()
 
     def decrypt(self, payload):
         decryptor = self.aes.decryptor()

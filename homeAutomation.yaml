@@ -55,32 +55,34 @@
           #        filename: zulu.list
           #        state: present
           #        /usr/share/openhab2/runtime/bin/backup
-    - name: Restore openhab2
-      shell: "yes 'y' | /usr/share/openhab2/runtime/bin/restore {{ playbook_dir }}/openhab2-after-reinstall.zip"
-      run_once: true
-      creates: .openhab2restore
-    - name: Install Openhab2
-      apt:
-        name: openhab2
-        state: present
-        update_cache: yes
-    - name: enable Openhab2
-      systemd:
-        name: openhab2
-        state: started
-        enabled: yes
-    - name: setup broadlink
-      copy:
-        src: broadlinkcli
-        dest: /usr/local/bin/broadlinkcli
-    - name: Install pip3
-      apt:
-        name: python3-pip
-        state: present
-        update_cache: yes
+          #    - name: Restore openhab2
+          #      shell: "yes 'y' | /usr/share/openhab2/runtime/bin/restore {{ playbook_dir }}/openhab2-latest-backup.zip"
+          #      run_once: true
+          #      args:
+          #        creates: .openhab2restore
+          #    - name: Install Openhab2
+          #      apt:
+          #        name: openhab2
+          #        state: present
+          #        update_cache: yes
+          #    - name: enable Openhab2
+          #      systemd:
+          #        name: openhab2
+          #        state: started
+          #        enabled: yes
+          #    - name: setup broadlink
+          #      copy:
+          #        src: broadlinkcli
+          #        dest: /usr/local/bin/broadlinkcli
+          #    - name: Install pip3
+          #      apt:
+          #        name: python3-pip
+          #        state: present
+          #        update_cache: yes
     - pip:
         name: broadlink
         executable: pip3
+        umask: "0022"
     - name: patch broadlink drivers
       copy:
         src: __init__.py

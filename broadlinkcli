@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import broadlink
 import time
@@ -41,3 +41,5 @@ elif args.state == 'up':
     devices[num].send_data(up)
     time.sleep(40)
     devices[num].send_data(stop)
+else:
+    print('Unknown command: ' + args.state)
