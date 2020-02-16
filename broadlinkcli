@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import broadlink
+import time
+import argparse
+import sys
+import re
+
+devices = broadlink.discover(timeout=5)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--state") 
+parser.parse_args()
+args = parser.parse_args()
+
+#file = open("testfile.txt","w") 
+#file.write(str(args.state))
+
+num = 0
+for name in devices:
+    if re.match(".*rm.*", str(name)):
+        break
+    else:
+        num = num + 1
+
+devices[num].auth()
+down = b'\xb2%4\x00%\x0c$\x0c%\x0c\r$\r$%\x0c\r$%\x0c$\x0c%\x0c\r$\r$\r$%\x0c\x0c$\r$\r\x00\x01o%\x0c%\x0c\r$%\x0c%\x0c%\x0c%\x0c\r$\x00\x00\x01\x00'
+up = b'\xb2\x154\x00\x0c$\x0c%\x0c%\x0c$$\r\r\x00\x01p$\x0c$\r\x0c$%\x0c$\r$\r$\r\x0c%$\r$\r$\r\x0c%\x0c$$\x0c\r%$\x0c%\r$\r\x0c%\x00\x00\x00\x00'
+stop = b'\xb2\x1b4\x00\r$\r$%\x0c\x0c$$\r$\x0c$\x0c\r$\r$\r$\r$%\x0c\r$\r\x00\x01o$\r$\x0c\r$$\r$\x0c%\x0c$\r\r$$\x0c%\x0c$\x0c\x00\x00\x00\x00'
+#devices[0].enter_learning()
+#test = devices[0].check_data()
+#devices[1].set_power(False)
+#devices[0].set_power(True)
+
+if args.state == 'down':
+    devices[num].send_data(stop)
+    devices[num].send_data(down)
+    time.sleep(33)
+    devices[num].send_data(stop)
+elif args.state == 'up':
+    devices[num].send_data(up)
+    time.sleep(40)
+    devices[num].send_data(stop)

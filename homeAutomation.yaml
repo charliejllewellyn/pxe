@@ -1,0 +1,71 @@
+---
+- name: pxe-ubuntu
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  pre_tasks:
+          #    - name: Install plex pre-req packages
+          #      apt:
+          #        pkg:
+          #        - apt-transport-https 
+          #        - ca-certificates
+          #    - name: Add an Apt signing key for Plex
+          #      apt_key:
+          #        url: https://downloads.plex.tv/plex-keys/PlexSign.key
+          #        state: present
+          #    - name: Install plex repo
+          #      apt_repository:
+          #        repo: deb https://downloads.plex.tv/repo/deb public main
+          #        filename: plexmediaserver.list
+          #        state: present
+          #    - name: Install plex
+          #      apt:
+          #        name: plexmediaserver
+          #        state: present
+          #        update_cache: yes
+          #    - name: enable Plex
+          #      systemd:
+          #        name: plexmediaserver
+          #        state: started
+          #        enabled: yes
+          #    - name: Create a directory if it does not exist
+          #      file:
+          #        path: /usr/lib/jvm
+          #        state: directory
+          #        mode: '0755'
+          #    - name: Download zulu-8 for arm
+          #      get_url:
+          #        url: https://cdn.azul.com/zulu-embedded/bin/zulu8.44.0.213-ca-jdk1.8.0_242-linux_aarch64.tar.gz
+          #        dest: /usr/lib/jvm/zulu-8.tar.gz
+          #    - name: Extract zulu-8
+          #      unarchive:
+          #        src: /usr/lib/jvm/zulu-8.tar.gz
+          #        dest: /usr/lib/jvm
+          #    - name: Correct java version selected
+          #      alternatives:
+          #        name: java
+          #        path: /usr/lib/jvm/zulu8.44.0.213-ca-jdk1.8.0_242-linux_aarch64/jre/bin/java
+          #    - name: Add an Apt signing key for Openhab2
+          #      apt_key:
+          #        url: https://bintray.com/user/downloadSubjectPublicKey?username=openhab
+          #        state: present
+          #    - name: Install Openhab2 repo
+          #      apt_repository:
+          #        repo: deb https://dl.bintray.com/openhab/apt-repo2 stable main
+          #        filename: zulu.list
+          #        state: present
+          #        /usr/share/openhab2/runtime/bin/backup
+    - name: Restore openhab2
+      shell: "yes 'y' | /usr/share/openhab2/runtime/bin/restore {{ playbook_dir }}/openhab2-after-reinstall.zip"
+
+      register: openhab2restore
+    - name: Install Openhab2
+      apt:
+        name: openhab2
+        state: present
+        update_cache: yes
+    - name: enable Openhab2
+      systemd:
+        name: openhab2
+        state: started
+        enabled: yes
