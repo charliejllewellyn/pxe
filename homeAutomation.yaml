@@ -79,11 +79,54 @@
           #        name: python3-pip
           #        state: present
           #        update_cache: yes
-    - pip:
-        name: broadlink
-        executable: pip3
-        umask: "0022"
-    - name: patch broadlink drivers
-      copy:
-        src: __init__.py
-        dest: /usr/local/lib/python3.6/dist-packages/broadlink/__init__.py
+          #    - pip:
+          #        name: broadlink
+          #        executable: pip3
+          #        umask: "0022"
+          #    - name: patch broadlink drivers
+          #      copy:
+          #        src: __init__.py
+          #        dest: /usr/local/lib/python3.6/dist-packages/broadlink/__init__.py
+  - name: Copy startup config files
+    copy:
+      src: deluge-daemon-user
+      dest: /etc/default/deluge-daemon
+      mode: '0644'
+  - name: Copy startup files
+    copy:
+      src: deluge-daemon
+      dest: /etc/init.d/deluge-daemon
+      mode: '0755'
+  - name: Install a list of packages
+    apt:
+      pkg:
+        - deluged
+        - deluge-webui
+  - name: Create log directory for deluged
+    file:
+      path: /var/log/deluged/daemon
+      state: directory
+      mode: '0755'
+      owner: debian-deluged
+  - name: Create log directory for deluged
+    file:
+      path: /var/log/deluged/web
+      state: directory
+      mode: '0755'
+      owner: debian-deluged
+  - name: Add deluge user
+    user: 
+      name: debian-deluged 
+      groups: plex
+      append: yes
+  - name: enable deluge service
+    systemd:
+      name: deluge-daemon
+      enabled: yes
+      state: restarted
+  - name: Create log directory for deluged
+    file:
+      src: deluge-log
+      dest: /etc/logrotate.d/deluge
+      state: directory
+      mode: '0644'
